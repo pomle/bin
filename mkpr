@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+MAIN_BRANCH="origin/master"
+ORIGIN_BRANCH=$(git branch --show-current)
+TEMP_BRANCH="$(date +%s)"
+REMOTE_BRANCH=$1
+
+# Prepare
+git fetch # Refresh origin
+git checkout -b $TEMP_BRANCH # Move working branch to a temporary branch
+git rebase -i $MAIN_BRANCH # Rebase interactively against master
+git push origin HEAD:$REMOTE_BRANCH $2 # Push results from rebase to remote
+
+# Restore
+git checkout $ORIGIN_BRANCH # Go back to original branch
+git branch -D $TEMP_BRANCH # Remove temporary branch
